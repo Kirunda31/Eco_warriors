@@ -1,0 +1,100 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id       Int    @id @default(autoincrement())
+  name     String
+  email    String @unique
+  password String
+  role     String @default("visitor")
+}
+
+model Program {
+  id          Int      @id @default(autoincrement())
+  name        String
+  slug        String   @unique
+  description String
+  goal        String
+  status      String   @default("active")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  projects    Project[]
+}
+
+model Project {
+  id          Int           @id @default(autoincrement())
+  program     Program       @relation(fields: [programId], references: [id])
+  programId   Int
+  title       String
+  slug        String        @unique
+  description String
+  location    String
+  status      String        @default("active")
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  activities  Activity[]
+  stories     Story[]
+  gallery     GalleryItem[]
+  reports     Report[]
+}
+
+model Activity {
+  id          Int      @id @default(autoincrement())
+  project     Project  @relation(fields: [projectId], references: [id])
+  projectId   Int
+  title       String
+  description String
+  date        DateTime
+  location    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Story {
+  id           Int      @id @default(autoincrement())
+  personName   String
+  headline     String
+  slug         String   @unique
+  challenge    String
+  intervention String
+  outcome      String
+  quote        String?
+  fullStory    String
+  status       String   @default("draft")
+  project      Project? @relation(fields: [projectId], references: [id])
+  projectId    Int?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model GalleryItem {
+  id          Int      @id @default(autoincrement())
+  imageUrl    String
+  caption     String?
+  project     Project? @relation(fields: [projectId], references: [id])
+  projectId   Int?
+  createdAt   DateTime @default(now())
+}
+
+model Report {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  fileUrl     String
+  coverImage  String?
+  category    String
+  year        Int
+  project     Project? @relation(fields: [projectId], references: [id])
+  projectId   Int?
+  createdAt   DateTime @default(now())
+}
