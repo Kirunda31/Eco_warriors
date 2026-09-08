@@ -1,4 +1,5 @@
 import { prisma } from '@/lib/prisma';
+import { notFound } from 'next/navigation';
 
 export default async function ProjectStoriesPage({
   params,
@@ -7,8 +8,8 @@ export default async function ProjectStoriesPage({
 }) {
   const { slug } = await params;
 
-  const project = await prisma.project.findUnique({
-    where: { slug },
+  const project = await prisma.project.findFirst({
+    where: { slug, status: 'active' },
     include: {
       stories: {
         where: { status: 'published' },
@@ -16,9 +17,7 @@ export default async function ProjectStoriesPage({
     },
   });
 
-  if (!project) {
-    return <h1>Project not found</h1>;
-  }
+  if (!project) notFound();
 
   return (
     <div>

@@ -1,25 +1,12 @@
 'use server';
 
 import { prisma } from '@/lib/prisma';
-import { cookies } from 'next/headers';
+import { requireProjectAccess } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 
 export async function deleteProject(formData: FormData) {
-  const cookieStore = await cookies();
-  const sessionCookie = cookieStore.get('session');
-
-  if (!sessionCookie) {
-    redirect('/login');
-  }
-
-  const userId = parseInt(sessionCookie.value);
-  const user = await prisma.user.findUnique({ where: { id: userId } });
-
-  if (!user || user.role !== 'admin') {
-    redirect('/login');
-  }
-
   const id = parseInt(formData.get('id') as string);
+  await requireProjectAccess(id);
 
   await prisma.project.delete({
     where: { id },

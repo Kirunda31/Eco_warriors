@@ -1,20 +1,7 @@
 import { prisma } from '@/lib/prisma';
+import Link from 'next/link';
 
 export default async function StoriesPage() {
-  const stories = await prisma.story.findMany({
-    where: { status: 'published' },
-  });
-
-  return (
-    <div>
-      <h1>Stories of Change</h1>
-      {stories.map((story) => (
-        <div key={story.id}>
-          <h2>{story.headline}</h2>
-          <p><strong>{story.personName}</strong></p>
-          <p>{story.outcome}</p>
-        </div>
-      ))}
-    </div>
-  );
+  const stories = await prisma.story.findMany({ where: { status: 'published', OR: [{ projectId: null }, { project: { is: { status: 'active' } } }] }, orderBy: { createdAt: 'desc' }, include: { project: true } });
+  return <div><section className="bg-emerald-900 px-6 py-16 text-white sm:py-20"><div className="mx-auto max-w-6xl"><p className="text-sm font-bold uppercase tracking-[0.18em] text-emerald-200">Community voices</p><h1 className="mt-3 text-4xl font-bold tracking-tight sm:text-5xl">Stories of change.</h1><p className="mt-5 max-w-2xl text-lg leading-8 text-emerald-100">The people, partnerships, and possibilities behind our work.</p></div></section><section className="mx-auto max-w-6xl px-6 py-16 sm:py-20"><div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">{stories.map((story) => <article key={story.id} className="flex flex-col rounded-xl border border-slate-200 p-6 shadow-sm"><p className="text-sm font-semibold text-emerald-700">{story.project?.title ?? 'Eco Warriors Initiative'}</p><h2 className="mt-3 text-xl font-bold">{story.headline}</h2><p className="mt-3 flex-1 text-sm leading-6 text-slate-600">{story.outcome}</p>{story.quote && <blockquote className="mt-5 border-l-2 border-emerald-500 pl-3 text-sm italic text-slate-600">“{story.quote}”</blockquote>}<p className="mt-5 font-semibold text-emerald-900">{story.personName}</p><Link href={`/stories/${story.slug}`} className="mt-5 text-sm font-semibold text-emerald-800 hover:underline">Read their story →</Link></article>)}</div>{stories.length === 0 && <p className="text-slate-600">Stories of change will be shared here soon.</p>}</section></div>;
 }

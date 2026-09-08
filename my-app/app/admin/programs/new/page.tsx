@@ -21,16 +21,21 @@ export default function NewProgramPage() {
           required
           className="border border-gray-300 rounded px-3 py-2"
         />
+        <label className="text-sm font-medium text-gray-700 -mb-2">Program description</label>
+        <p className="text-xs text-gray-500 -mt-3">Use paragraphs to explain who the programme serves, how it works, and the change it seeks to make.</p>
         <textarea
           name="description"
-          placeholder="Description"
+          placeholder="Write a clear, detailed programme description..."
           required
+          rows={7}
           className="border border-gray-300 rounded px-3 py-2"
         />
+        <label className="text-sm font-medium text-gray-700 -mb-2">Long-term goal</label>
         <textarea
           name="goal"
-          placeholder="Goal"
+          placeholder="Describe the lasting outcome this programme is working toward..."
           required
+          rows={4}
           className="border border-gray-300 rounded px-3 py-2"
         />
         <button

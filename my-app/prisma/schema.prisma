@@ -12,52 +12,77 @@ datasource db {
 }
 
 model User {
-  id       Int    @id @default(autoincrement())
-  name     String
-  email    String @unique
-  password String
-  role     String @default("visitor")
+  id              Int                     @id @default(autoincrement())
+  name            String
+  email           String                  @unique
+  username        String                  @unique
+  password        String
+  role            String                  @default("visitor")
+  managedProgram  Program?
+  progressReports ProjectProgressReport[]
 }
 
 model Program {
-  id          Int      @id @default(autoincrement())
-  name        String
-  slug        String   @unique
-  description String
-  goal        String
-  status      String   @default("active")
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  projects    Project[]
+  id           Int       @id @default(autoincrement())
+  name         String
+  slug         String    @unique
+  description  String
+  goal         String
+  heroImageUrl String?
+  status       String    @default("active")
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  projects     Project[]
+  manager      User?     @relation(fields: [managerId], references: [id])
+  managerId    Int?      @unique
 }
 
 model Project {
-  id          Int           @id @default(autoincrement())
-  program     Program       @relation(fields: [programId], references: [id])
-  programId   Int
-  title       String
-  slug        String        @unique
-  description String
-  location    String
-  status      String        @default("active")
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-  activities  Activity[]
-  stories     Story[]
-  gallery     GalleryItem[]
-  reports     Report[]
+  id                 Int                     @id @default(autoincrement())
+  program            Program                 @relation(fields: [programId], references: [id])
+  programId          Int
+  title              String
+  slug               String                  @unique
+  description        String
+  location           String
+  heroImageUrl       String?
+  status             String                  @default("active")
+  createdAt          DateTime                @default(now())
+  updatedAt          DateTime                @updatedAt
+  milestones         Milestone[]
+  stories            Story[]
+  gallery            GalleryItem[]
+  reports            Report[]
+  progressReports    ProjectProgressReport[]
+  fundingCommitments FundingCommitment[]
 }
 
-model Activity {
+model Milestone {
   id          Int      @id @default(autoincrement())
   project     Project  @relation(fields: [projectId], references: [id])
   projectId   Int
   title       String
   description String
-  date        DateTime
-  location    String
+  startDate   DateTime
+  endDate     DateTime
+  budget      Float
   createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+}
+
+model ProjectProgressReport {
+  id              Int      @id @default(autoincrement())
+  project         Project  @relation(fields: [projectId], references: [id])
+  projectId       Int
+  submittedBy     User     @relation(fields: [submittedById], references: [id])
+  submittedById   Int
+  reportingPeriod String
+  summary         String
+  achievements    String
+  challenges      String
+  nextSteps       String
+  evidenceUrl     String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }
 
 model Story {
@@ -78,12 +103,12 @@ model Story {
 }
 
 model GalleryItem {
-  id          Int      @id @default(autoincrement())
-  imageUrl    String
-  caption     String?
-  project     Project? @relation(fields: [projectId], references: [id])
-  projectId   Int?
-  createdAt   DateTime @default(now())
+  id        Int      @id @default(autoincrement())
+  imageUrl  String
+  caption   String?
+  project   Project? @relation(fields: [projectId], references: [id])
+  projectId Int?
+  createdAt DateTime @default(now())
 }
 
 model Report {
@@ -97,4 +122,133 @@ model Report {
   project     Project? @relation(fields: [projectId], references: [id])
   projectId   Int?
   createdAt   DateTime @default(now())
+}
+
+model News {
+  id            Int      @id @default(autoincrement())
+  title         String
+  slug          String   @unique
+  featuredImage String?
+  content       String
+  author        String
+  category      String
+  tags          String?
+  status        String   @default("draft")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Event {
+  id               Int      @id @default(autoincrement())
+  title            String
+  description      String
+  date             DateTime
+  time             String
+  location         String
+  registrationLink String?
+  featuredImage    String?
+  results          String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model Partner {
+  id                 Int                 @id @default(autoincrement())
+  organizationName   String
+  logo               String?
+  description        String
+  website            String?
+  partnershipType    String
+  displayOrder       Int                 @default(0)
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  contacts           PartnerContact[]
+  fundingCommitments FundingCommitment[]
+}
+
+model PartnerContact {
+  id        Int      @id @default(autoincrement())
+  partner   Partner  @relation(fields: [partnerId], references: [id])
+  partnerId Int
+  name      String
+  title     String?
+  email     String?
+  phone     String?
+  notes     String?
+  isPrimary Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([partnerId])
+}
+
+model FundingCommitment {
+  id            Int       @id @default(autoincrement())
+  partner       Partner   @relation(fields: [partnerId], references: [id])
+  partnerId     Int
+  project       Project?  @relation(fields: [projectId], references: [id])
+  projectId     Int?
+  title         String
+  type          String    @default("grant")
+  status        String    @default("prospect")
+  amount        Float
+  currency      String    @default("UGX")
+  pledgedOn     DateTime?
+  deadline      DateTime?
+  reportDueDate DateTime?
+  notes         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([partnerId])
+  @@index([projectId])
+  @@index([status, deadline])
+}
+
+model Leader {
+  id           Int      @id @default(autoincrement())
+  name         String
+  position     String
+  biography    String
+  photo        String?
+  socialLinks  String?
+  category     String
+  displayOrder Int      @default(0)
+  createdAt    DateTime @default(now())
+}
+
+model ImpactMetric {
+  id          Int      @id @default(autoincrement())
+  title       String
+  value       String
+  program     String?
+  project     String?
+  year        Int
+  description String?
+  source      String?
+  status      String   @default("draft")
+  createdAt   DateTime @default(now())
+}
+
+model Volunteer {
+  id           Int      @id @default(autoincrement())
+  name         String
+  email        String
+  country      String
+  skills       String
+  interest     String
+  availability String
+  cvUrl        String?
+  status       String   @default("applicant")
+  createdAt    DateTime @default(now())
+}
+
+model ContactMessage {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String
+  category  String
+  message   String
+  status    String   @default("unread")
+  createdAt DateTime @default(now())
 }

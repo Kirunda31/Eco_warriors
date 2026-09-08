@@ -1,8 +1,11 @@
 import { prisma } from '@/lib/prisma';
 import { createReport } from '@/app/actions/createReport';
+import { isProgramManager, requireStaff } from '@/lib/auth';
 
 export default async function NewReportPage() {
+  const user = await requireStaff();
   const projects = await prisma.project.findMany({
+    where: isProgramManager(user) ? { program: { managerId: user.id } } : {},
     select: { id: true, title: true },
   });
 
@@ -59,7 +62,7 @@ export default async function NewReportPage() {
           name="projectId"
           className="border border-gray-300 rounded px-3 py-2"
         >
-          <option value="">No project (General)</option>
+          {!isProgramManager(user) && <option value="">No project (General)</option>}
           {projects.map((project) => (
             <option key={project.id} value={project.id}>
               {project.title}

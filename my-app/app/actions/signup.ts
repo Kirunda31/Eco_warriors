@@ -2,8 +2,10 @@
 
 import { prisma } from '@/lib/prisma';
 import bcrypt from 'bcrypt';
+import { requireAdmin } from '@/lib/auth';
 
 export async function signupUser(formData: FormData) {
+  await requireAdmin();
   const name = formData.get('name') as string;
   const email = formData.get('email') as string;
   const password = formData.get('password') as string;
@@ -22,6 +24,7 @@ export async function signupUser(formData: FormData) {
     data: {
       name,
       email,
+      username: email,
       password: hashedPassword,
     },
   });

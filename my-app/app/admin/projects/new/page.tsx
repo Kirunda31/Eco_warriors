@@ -1,8 +1,11 @@
 import { prisma } from '@/lib/prisma';
 import { createProject } from '@/app/actions/createProject';
+import { isProgramManager, requireStaff } from '@/lib/auth';
 
 export default async function NewProjectPage() {
+  const user = await requireStaff();
   const programs = await prisma.program.findMany({
+    where: isProgramManager(user) ? { managerId: user.id } : {},
     select: { id: true, name: true },
   });
 
@@ -24,10 +27,13 @@ export default async function NewProjectPage() {
           required
           className="border border-gray-300 rounded px-3 py-2"
         />
+        <label className="text-sm font-medium text-gray-700 -mb-2">Project description</label>
+        <p className="text-xs text-gray-500 -mt-3">Include the problem, the people served, the activities, and the expected change. Paragraphs will be preserved on the public site.</p>
         <textarea
           name="description"
-          placeholder="Description"
+          placeholder="Write a clear, detailed project description..."
           required
+          rows={7}
           className="border border-gray-300 rounded px-3 py-2"
         />
         <input

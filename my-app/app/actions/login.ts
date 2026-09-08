@@ -3,17 +3,19 @@
 import { prisma } from '@/lib/prisma';
 import bcrypt from 'bcrypt';
 import { cookies } from 'next/headers';
+import { createSessionValue, sessionCookieOptions } from '@/lib/auth';
+import { redirect } from 'next/navigation';
 
 export async function loginUser(formData: FormData) {
-  const email = formData.get('email') as string;
+  const username = (formData.get('username') as string).trim();
   const password = formData.get('password') as string;
 
   const user = await prisma.user.findUnique({
-    where: { email },
+    where: { username },
   });
 
   if (!user) {
-    return { error: 'No account found with that email' };
+    return { error: 'No account found with that username' };
   }
 
   const passwordMatches = await bcrypt.compare(password, user.password);
@@ -23,10 +25,9 @@ export async function loginUser(formData: FormData) {
   }
 
   const cookieStore = await cookies();
-  cookieStore.set('session', user.id.toString(), {
-    httpOnly: true,
-    secure:   process.env.NODE_ENV === 'production',
-  });
+  cookieStore.set('session', createSessionValue(user.id), sessionCookieOptions);
 
-  return { success: true };
+  if (user.role === 'admin') redirect('/admin');
+  if (user.role === 'manager') redirect('/admin/programs');
+  redirect('/');
 }
