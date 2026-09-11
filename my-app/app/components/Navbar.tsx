@@ -4,6 +4,7 @@ import { getSessionUser } from '@/lib/auth';
 
 export default async function Navbar() {
   let isAdmin = false;
+  let isTrustee = false;
   let isLoggedIn = false;
 
   const user = await getSessionUser();
@@ -12,6 +13,7 @@ export default async function Navbar() {
     if (user?.role === 'admin' || user?.role === 'manager') {
       isAdmin = true;
     }
+    isTrustee = user.role === 'trustee';
   }
 
   return (
@@ -30,6 +32,7 @@ export default async function Navbar() {
         </div>
         <div className="order-2 flex items-center gap-3 sm:order-3">
           {isAdmin && <Link href="/admin" className="text-sm font-medium hover:text-emerald-700">Admin</Link>}
+          {isTrustee && <Link href="/trustee" className="text-sm font-medium hover:text-emerald-700">Trustee area</Link>}
           {isLoggedIn ? (
             <form action={logoutUser}><button type="submit" className="text-sm font-medium text-emerald-800 hover:text-emerald-950">Log out</button></form>
           ) : null}

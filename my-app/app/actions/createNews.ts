@@ -3,13 +3,14 @@
 import { prisma } from '@/lib/prisma';
 import { requireAdmin } from '@/lib/auth';
 import { redirect } from 'next/navigation';
+import { uploadFeaturedImage } from './uploadFeaturedImage';
 
 export async function createNews(formData: FormData) {
-  const user = await requireAdmin();
+  await requireAdmin();
 
   const title = formData.get('title') as string;
   const slug = formData.get('slug') as string;
-  const featuredImage = formData.get('featuredImage') as string;
+  const featuredImage = await uploadFeaturedImage(formData.get('featuredImage'), 'news');
   const content = formData.get('content') as string;
   const author = formData.get('author') as string;
   const category = formData.get('category') as string;
@@ -20,7 +21,7 @@ export async function createNews(formData: FormData) {
     data: {
       title,
       slug,
-      featuredImage: featuredImage || null,
+      featuredImage,
       content,
       author,
       category,

@@ -55,6 +55,13 @@ model Project {
   reports            Report[]
   progressReports    ProjectProgressReport[]
   fundingCommitments FundingCommitment[]
+  beneficiarySessions BeneficiarySession[]
+  deliveryRecords    DeliveryRecord[]
+  documents          Document[]
+  volunteerAssignments VolunteerAssignment[]
+  reminders          Reminder[]
+  latitude           Float?
+  longitude          Float?
 }
 
 model Milestone {
@@ -81,8 +88,58 @@ model ProjectProgressReport {
   challenges      String
   nextSteps       String
   evidenceUrl     String?
+  photoUrls       String?
+  budgetNotes     String?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
+  status          String   @default("submitted")
+}
+
+model BeneficiarySession {
+  id           Int      @id @default(autoincrement())
+  project      Project  @relation(fields: [projectId], references: [id])
+  projectId    Int
+  organisation String
+  location     String
+  sessionType  String
+  beneficiaryCount Int
+  sessionDate  DateTime
+  notes        String?
+  createdAt    DateTime @default(now())
+
+  @@index([projectId, sessionDate])
+}
+
+model DeliveryRecord {
+  id          Int      @id @default(autoincrement())
+  project     Project  @relation(fields: [projectId], references: [id])
+  projectId   Int
+  metricType  String
+  quantity    Int
+  activityDate DateTime
+  evidenceUrl String?
+  notes       String?
+  status      String   @default("submitted")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([projectId, metricType, status])
+}
+
+model Document {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String?
+  fileUrl     String
+  category    String
+  visibility  String   @default("internal")
+  status      String   @default("submitted")
+  project     Project? @relation(fields: [projectId], references: [id])
+  projectId   Int?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([projectId, status])
 }
 
 model Story {
@@ -121,6 +178,7 @@ model Report {
   year        Int
   project     Project? @relation(fields: [projectId], references: [id])
   projectId   Int?
+  status      String   @default("draft")
   createdAt   DateTime @default(now())
 }
 
@@ -241,6 +299,41 @@ model Volunteer {
   cvUrl        String?
   status       String   @default("applicant")
   createdAt    DateTime @default(now())
+  assignments  VolunteerAssignment[]
+}
+
+model VolunteerAssignment {
+  id          Int       @id @default(autoincrement())
+  volunteer   Volunteer @relation(fields: [volunteerId], references: [id])
+  volunteerId Int
+  project     Project?  @relation(fields: [projectId], references: [id])
+  projectId   Int?
+  role        String
+  startDate   DateTime?
+  endDate     DateTime?
+  attendance  String    @default("pending")
+  certificateUrl String?
+  notes       String?
+  createdAt   DateTime  @default(now())
+
+  @@index([volunteerId])
+  @@index([projectId])
+}
+
+model Reminder {
+  id          Int      @id @default(autoincrement())
+  title       String
+  type        String
+  dueDate     DateTime
+  status      String   @default("open")
+  notes       String?
+  project     Project? @relation(fields: [projectId], references: [id])
+  projectId   Int?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([dueDate, status])
+  @@index([projectId])
 }
 
 model ContactMessage {

@@ -16,7 +16,8 @@ export async function updateStory(formData: FormData) {
   const outcome = formData.get('outcome') as string;
   const quote = formData.get('quote') as string;
   const fullStory = formData.get('fullStory') as string;
-  const status = formData.get('status') as string;
+  const requestedStatus = formData.get('status') as string;
+  const status = user.role === 'manager' ? 'submitted' : (requestedStatus === 'published' ? 'published' : 'draft');
   const projectIdRaw = formData.get('projectId') as string;
   await requireStoryAccess(id);
   if (projectIdRaw) await requireProjectAccess(parseInt(projectIdRaw));

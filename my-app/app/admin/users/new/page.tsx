@@ -23,6 +23,7 @@ export default async function NewUserPage() {
         <select name="role" defaultValue="manager" className="border border-gray-300 rounded px-3 py-2">
           <option value="manager">Program manager</option>
           <option value="admin">Administrator</option>
+          <option value="trustee">Trustee</option>
         </select>
         <label className="text-sm text-gray-600">Program to manage</label>
         <select name="programId" className="border border-gray-300 rounded px-3 py-2">

@@ -29,6 +29,7 @@ export async function updateReport(formData: FormData) {
       category,
       year,
       projectId: projectIdRaw ? parseInt(projectIdRaw) : null,
+      status: user.role === 'manager' ? 'submitted' : undefined,
     },
   });
 

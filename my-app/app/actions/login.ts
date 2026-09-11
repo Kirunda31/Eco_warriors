@@ -29,5 +29,6 @@ export async function loginUser(formData: FormData) {
 
   if (user.role === 'admin') redirect('/admin');
   if (user.role === 'manager') redirect('/admin/programs');
+  if (user.role === 'trustee') redirect('/trustee');
   redirect('/');
 }

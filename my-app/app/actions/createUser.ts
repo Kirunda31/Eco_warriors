@@ -16,13 +16,13 @@ export async function createUser(formData: FormData) {
   const programIdValue = formData.get('programId') as string;
   const programId = programIdValue ? Number(programIdValue) : null;
 
-  if (!name || !username || !email || password.length < 8 || !['admin', 'manager'].includes(role)) {
+  if (!name || !username || !email || password.length < 8 || !['admin', 'manager', 'trustee'].includes(role)) {
     throw new Error('Provide a name, unique username, email, an 8-character password, and a valid role.');
   }
   if (role === 'manager' && !programId) {
     throw new Error('A program manager must be assigned to a program.');
   }
-  if (role === 'admin' && programId) {
+  if ((role === 'admin' || role === 'trustee') && programId) {
     throw new Error('Only program managers can be assigned a program.');
   }
 

@@ -10,6 +10,8 @@ export async function updateUserRole(formData: FormData) {
   const id = parseInt(formData.get('id') as string);
   const role = formData.get('role') as string;
 
+  if (!['visitor', 'manager', 'admin', 'trustee'].includes(role)) throw new Error('Invalid role.');
+
   if (id === currentUser.id) {
     redirect('/admin/users');
   }

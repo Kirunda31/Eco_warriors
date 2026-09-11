@@ -26,6 +26,7 @@ export async function createReport(formData: FormData) {
       category,
       year,
       projectId: projectIdRaw ? parseInt(projectIdRaw) : null,
+      status: user.role === 'manager' ? 'submitted' : 'draft',
     },
   });
 

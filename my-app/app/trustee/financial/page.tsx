@@ -1,0 +1,9 @@
+import { prisma } from '@/lib/prisma';
+import { requireTrustee } from '@/lib/auth';
+
+export default async function TrusteeFinancialPage() {
+  await requireTrustee();
+  const programs = await prisma.program.findMany({ include: { projects: { include: { milestones: { select: { budget: true } } } } }, orderBy: { name: 'asc' } });
+  const total = programs.reduce((sum, program) => sum + program.projects.reduce((projectSum, project) => projectSum + project.milestones.reduce((milestoneSum, milestone) => milestoneSum + milestone.budget, 0), 0), 0);
+  return <div><p className="text-sm font-semibold text-teal-700">Read-only financial planning view</p><h1 className="mt-1 text-2xl font-bold">Financial overview</h1><article className="mt-6 max-w-sm rounded-xl border border-teal-100 bg-white p-5"><p className="text-2xl font-bold text-teal-800">UGX {total.toLocaleString('en-UG')}</p><p className="mt-1 text-sm text-slate-500">Total planned milestone budget</p></article><div className="mt-6 overflow-hidden rounded-xl border bg-white"><table className="w-full text-sm"><thead><tr className="bg-slate-50 text-left text-xs uppercase text-slate-500"><th className="px-4 py-3">Program</th><th className="px-4 py-3">Projects</th><th className="px-4 py-3">Planned milestone budget</th></tr></thead><tbody>{programs.map(program => { const budget = program.projects.reduce((sum, project) => sum + project.milestones.reduce((milestoneSum, milestone) => milestoneSum + milestone.budget, 0), 0); return <tr key={program.id} className="border-t"><td className="px-4 py-3 font-medium">{program.name}</td><td className="px-4 py-3">{program.projects.length}</td><td className="px-4 py-3 font-semibold text-teal-800">UGX {budget.toLocaleString('en-UG')}</td></tr>; })}</tbody></table></div><p className="mt-4 text-sm text-slate-500">Donation receipts are not shown because this application does not yet have a Donation model.</p></div>;
+}

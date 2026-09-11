@@ -54,6 +54,12 @@ export async function requireStaff() {
   return user;
 }
 
+export async function requireTrustee() {
+  const user = await getSessionUser();
+  if (!user || user.role !== 'trustee') redirect('/login');
+  return user;
+}
+
 export function isProgramManager(user: { role: string }) {
   return user.role === 'manager';
 }

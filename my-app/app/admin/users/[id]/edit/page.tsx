@@ -28,6 +28,7 @@ export default async function EditUserPage({ params }: { params: Promise<{ id: s
              <option value="visitor">Visitor</option>
              <option value="manager">Program Manager</option>
             <option value="admin">Admin</option>
+            <option value="trustee">Trustee</option>
 </select>
           <button type="submit" className="bg-green-800 text-white rounded px-4 py-2 hover:bg-green-900">
             Save Role

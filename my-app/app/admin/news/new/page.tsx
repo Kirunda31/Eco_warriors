@@ -4,10 +4,10 @@ export default function NewNewsPage() {
   return (
     <div className="max-w-lg mx-auto p-6">
       <h1 className="text-2xl font-bold mb-6">Add News Article</h1>
-      <form action={createNews} className="flex flex-col gap-4">
+      <form action={createNews} encType="multipart/form-data" className="flex flex-col gap-4">
         <input type="text" name="title" placeholder="Title" required className="border border-gray-300 rounded px-3 py-2" />
         <input type="text" name="slug" placeholder="Slug" required className="border border-gray-300 rounded px-3 py-2" />
-        <input type="url" name="featuredImage" placeholder="Featured Image URL (optional)" className="border border-gray-300 rounded px-3 py-2" />
+        <label className="text-sm font-medium text-gray-700">Featured photo <span className="text-red-700">*</span><input type="file" name="featuredImage" accept="image/*" required className="mt-1 block w-full border border-gray-300 rounded px-3 py-2" /></label>
         <textarea name="content" placeholder="Content" required className="border border-gray-300 rounded px-3 py-2" rows={6} />
         <input type="text" name="author" placeholder="Author" required className="border border-gray-300 rounded px-3 py-2" />
         <input type="text" name="category" placeholder="Category" required className="border border-gray-300 rounded px-3 py-2" />
