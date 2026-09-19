@@ -8,7 +8,6 @@ export default async function Home() {
     prisma.project.findMany({
       where: { status: 'active' },
       orderBy: { createdAt: 'desc' },
-      take: 3,
       include: { gallery: { orderBy: { createdAt: 'desc' }, take: 1, select: { imageUrl: true, caption: true } } },
     }),
     prisma.impactMetric.findMany({
@@ -36,6 +35,9 @@ export default async function Home() {
     projectName: project.title,
     projectSlug: project.slug,
   })));
+  const featuredProjects = [...projects]
+    .sort((a, b) => Number(b.slug === 'kickout-period-poverty-kpp') - Number(a.slug === 'kickout-period-poverty-kpp'))
+    .slice(0, 3);
 
   return (
     <div className="overflow-hidden">
@@ -93,7 +95,7 @@ export default async function Home() {
         <div className="max-w-6xl mx-auto px-6">
           <div className="flex flex-wrap items-end justify-between gap-4"><div><p className="text-sm font-bold uppercase tracking-[0.16em] text-emerald-700">In the field</p><h2 className="mt-2 text-3xl font-bold tracking-tight">Featured projects</h2></div><Link href="/projects" className="font-semibold text-emerald-800 hover:underline">View all projects →</Link></div>
           <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-3">
-            {projects.map((project) => (
+            {featuredProjects.map((project) => (
               <Link
                 key={project.id}
                 href={`/projects/${project.slug}`}
