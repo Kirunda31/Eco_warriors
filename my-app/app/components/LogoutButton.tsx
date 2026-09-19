@@ -16,6 +16,6 @@ function SubmitButton() {
   );
 }
 
-export default function LogoutButton({ action }: { action: () => Promise<never> }) {
+export default function LogoutButton({ action }: { action: () => Promise<void> }) {
   return <form action={action}><SubmitButton /></form>;
 }
