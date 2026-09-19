@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { logoutUser } from '@/app/actions/logout';
 import { getSessionUser } from '@/lib/auth';
+import LogoutButton from './LogoutButton';
 
 export default async function Navbar() {
   let isAdmin = false;
@@ -34,7 +35,7 @@ export default async function Navbar() {
           {isAdmin && <Link href="/admin" className="text-sm font-medium hover:text-emerald-700">Admin</Link>}
           {isTrustee && <Link href="/trustee" className="text-sm font-medium hover:text-emerald-700">Trustee area</Link>}
           {isLoggedIn ? (
-            <form action={logoutUser}><button type="submit" className="text-sm font-medium text-emerald-800 hover:text-emerald-950">Log out</button></form>
+            <LogoutButton action={logoutUser} />
           ) : null}
           <Link href="/donate" className="rounded-full bg-emerald-800 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-900">Donate</Link>
         </div>
