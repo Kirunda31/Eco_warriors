@@ -27,7 +27,7 @@ export default async function EditStoryPage({
     <div className="max-w-lg mx-auto p-6">
       <h1 className="text-2xl font-bold mb-6">Edit Story</h1>
 
-      <form action={updateStory} className="flex flex-col gap-4 mb-6">
+      <form action={updateStory} encType="multipart/form-data" className="flex flex-col gap-4 mb-6">
         <input type="hidden" name="id" value={story.id} />
         <input
           type="text"
@@ -80,6 +80,8 @@ export default async function EditStoryPage({
           required
           className="border border-gray-300 rounded px-3 py-2"
         />
+        <label className="text-sm font-medium text-gray-700">Story photo (optional)<input type="file" name="photo" accept="image/*" className="mt-1 block w-full border border-gray-300 rounded px-3 py-2" /><span className="mt-1 block text-xs font-normal text-gray-500">{story.photoUrl ? 'Leave blank to keep the current photo.' : 'No photo uploaded yet.'}</span></label>
+        <label className="text-sm font-medium text-gray-700">Video link (optional)<input type="url" name="videoUrl" defaultValue={story.videoUrl ?? ''} placeholder="https://youtube.com/... or a social-media post" className="mt-1 block w-full border border-gray-300 rounded px-3 py-2" /><span className="mt-1 block text-xs font-normal text-gray-500">This is shown as an external link, not an embedded video.</span></label>
         <select
           name="status"
           defaultValue={story.status}

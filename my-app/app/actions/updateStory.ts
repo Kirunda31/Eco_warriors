@@ -3,6 +3,8 @@
 import { prisma } from '@/lib/prisma';
 import { requireProjectAccess, requireStaff, requireStoryAccess } from '@/lib/auth';
 import { redirect } from 'next/navigation';
+import { uploadStoryPhoto } from './uploadStoryPhoto';
+import { getVideoUrl } from './storyMedia';
 
 export async function updateStory(formData: FormData) {
   const user = await requireStaff();
@@ -16,6 +18,10 @@ export async function updateStory(formData: FormData) {
   const outcome = formData.get('outcome') as string;
   const quote = formData.get('quote') as string;
   const fullStory = formData.get('fullStory') as string;
+  const existing = await prisma.story.findUnique({ where: { id }, select: { photoUrl: true } });
+  if (!existing) throw new Error('Story not found.');
+  const photoUrl = await uploadStoryPhoto(formData.get('photo'), existing.photoUrl);
+  const videoUrl = getVideoUrl(formData.get('videoUrl'));
   const requestedStatus = formData.get('status') as string;
   const status = user.role === 'manager' ? 'submitted' : (requestedStatus === 'published' ? 'published' : 'draft');
   const projectIdRaw = formData.get('projectId') as string;
@@ -34,6 +40,8 @@ export async function updateStory(formData: FormData) {
       outcome,
       quote: quote || null,
       fullStory,
+      photoUrl,
+      videoUrl,
       status,
       projectId: projectIdRaw ? parseInt(projectIdRaw) : null,
     },

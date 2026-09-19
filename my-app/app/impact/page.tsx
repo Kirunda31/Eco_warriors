@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { prisma } from '@/lib/prisma';
+import ImpactMap from '@/app/components/ImpactMap';
 
 const reportMetrics = [
   { value: '10,230', label: 'reusable pads distributed', detail: 'Individual pads delivered through 3,410 reusable-pad kits since 2024.', source: 'Eco Menstruation Impact Report', tone: 'bg-emerald-900 text-white' },
@@ -40,6 +41,7 @@ const impactAreas = [
 ];
 
 export default async function ImpactPage() {
+  const mapProjects = await prisma.project.findMany({ where: { status: 'active', latitude: { not: null }, longitude: { not: null } }, select: { title: true, location: true, latitude: true, longitude: true } });
   const metrics = await prisma.impactMetric.findMany({
     where: { status: 'published' },
     orderBy: { year: 'desc' },
@@ -76,6 +78,7 @@ export default async function ImpactPage() {
       </section>
 
       <section className="mx-auto max-w-6xl px-6 py-20 sm:py-28">
+        <div className="mb-16"><p className="text-sm font-bold uppercase tracking-[0.16em] text-emerald-700">Where we work</p><h2 className="mt-2 text-3xl font-bold">Impact across Uganda.</h2><div className="mt-6"><ImpactMap projects={mapProjects.map(p => ({ title: p.title, location: p.location, latitude: p.latitude!, longitude: p.longitude! }))} /></div></div>
         <div className="max-w-2xl">
           <p className="text-sm font-bold uppercase tracking-[0.18em] text-emerald-700">Where change takes root</p>
           <h2 className="mt-3 text-3xl font-bold tracking-tight text-emerald-950 sm:text-4xl">Impact is more than a number.</h2>

@@ -4,7 +4,7 @@ import { requireAdmin } from '@/lib/auth';
 
 export default async function AdminEventsPage() {
   await requireAdmin();
-  const events = await prisma.event.findMany({ orderBy: { date: 'asc' } });
+  const events = await prisma.event.findMany({ include: { _count: { select: { registrations: true } } }, orderBy: { date: 'asc' } });
 
   return (
     <div>
@@ -19,6 +19,7 @@ export default async function AdminEventsPage() {
               <th className="px-4 py-3">Title</th>
               <th className="px-4 py-3">Date</th>
               <th className="px-4 py-3">Location</th>
+              <th className="px-4 py-3">Registrations</th>
               <th className="px-4 py-3"></th>
             </tr>
           </thead>
@@ -28,6 +29,7 @@ export default async function AdminEventsPage() {
                 <td className="px-4 py-3">{event.title}</td>
                 <td className="px-4 py-3 text-gray-500">{event.date.toDateString()}</td>
                 <td className="px-4 py-3 text-gray-500">{event.location}</td>
+                <td className="px-4 py-3 text-gray-500">{event._count.registrations}</td>
                 <td className="px-4 py-3 text-right">
                   <Link href={`/admin/events/${event.id}/edit`} className="text-green-800 font-medium hover:underline">Edit</Link>
                 </td>

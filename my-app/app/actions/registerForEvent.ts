@@ -13,14 +13,9 @@ export async function registerForEvent(formData: FormData) {
     redirect('/events?status=invalid');
   }
 
-  await prisma.contactMessage.create({
-    data: {
-      name,
-      email,
-      category: 'Event registration',
-      message: `Registration interest: ${event.title} (event ID ${event.id})`,
-    },
-  });
+  const phone = String(formData.get('phone') ?? '').trim();
+  const guests = Math.max(0, Number(formData.get('guests') ?? 0) || 0);
+  await prisma.eventRegistration.upsert({ where: { eventId_email: { eventId, email } }, update: { name, phone: phone || null, guests, status: 'registered' }, create: { eventId, name, email, phone: phone || null, guests } });
 
   redirect('/events?status=registered');
 }

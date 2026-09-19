@@ -152,6 +152,8 @@ model Story {
   outcome      String
   quote        String?
   fullStory    String
+  photoUrl     String?
+  videoUrl     String?
   status       String   @default("draft")
   project      Project? @relation(fields: [projectId], references: [id])
   projectId    Int?
@@ -208,6 +210,20 @@ model Event {
   results          String?
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
+  registrations    EventRegistration[]
+}
+
+model EventRegistration {
+  id        Int      @id @default(autoincrement())
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  eventId   Int
+  name      String
+  email     String
+  phone     String?
+  guests    Int      @default(0)
+  status    String   @default("registered")
+  createdAt DateTime @default(now())
+  @@unique([eventId, email])
 }
 
 model Partner {
