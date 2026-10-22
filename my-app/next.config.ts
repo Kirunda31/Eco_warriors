@@ -8,10 +8,9 @@ const nextConfig: NextConfig = {
     tsconfigPath: "./tsconfig.json",
   },
   experimental: {
-    // News and event forms accept images up to 10 MB; leave room for the
-    // multipart/form-data headers included in the Server Action request.
+    // Keep multipart uploads below Vercel's 4.5 MB function request limit.
     serverActions: {
-      bodySizeLimit: "12mb",
+      bodySizeLimit: "4.4mb",
     },
   },
 };

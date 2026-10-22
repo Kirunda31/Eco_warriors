@@ -1,13 +1,14 @@
 import { createNews } from '@/app/actions/createNews';
+import FeaturedImageForm from '@/app/components/FeaturedImageForm';
 
 export default function NewNewsPage() {
   return (
     <div className="max-w-lg mx-auto p-6">
       <h1 className="text-2xl font-bold mb-6">Add News Article</h1>
-      <form action={createNews} encType="multipart/form-data" className="flex flex-col gap-4">
+      <FeaturedImageForm action={createNews} className="flex flex-col gap-4">
         <input type="text" name="title" placeholder="Title" required className="border border-gray-300 rounded px-3 py-2" />
         <input type="text" name="slug" placeholder="Slug" required className="border border-gray-300 rounded px-3 py-2" />
-        <label className="text-sm font-medium text-gray-700">Featured photo <span className="text-red-700">*</span><input type="file" name="featuredImage" accept="image/*" required className="mt-1 block w-full border border-gray-300 rounded px-3 py-2" /></label>
+        <label className="text-sm font-medium text-gray-700">Featured photo <span className="text-red-700">*</span><input type="file" name="featuredImage" accept="image/*" required className="mt-1 block w-full border border-gray-300 rounded px-3 py-2" /><span className="mt-1 block text-xs font-normal text-gray-500">Maximum file size: 4 MB.</span></label>
         <textarea name="content" placeholder="Content" required className="border border-gray-300 rounded px-3 py-2" rows={6} />
         <input type="text" name="author" placeholder="Author" required className="border border-gray-300 rounded px-3 py-2" />
         <input type="text" name="category" placeholder="Category" required className="border border-gray-300 rounded px-3 py-2" />
@@ -17,7 +18,7 @@ export default function NewNewsPage() {
           <option value="published">Published</option>
         </select>
         <button type="submit" className="bg-green-800 text-white rounded px-4 py-2 hover:bg-green-900">Publish Article</button>
-      </form>
+      </FeaturedImageForm>
     </div>
   );
 }
