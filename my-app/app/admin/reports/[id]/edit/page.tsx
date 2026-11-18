@@ -55,8 +55,10 @@ export default async function EditReportPage({
           type="url"
           name="coverImage"
           defaultValue={report.coverImage ?? ''}
+          placeholder="Cover Image URL (optional)"
           className="border border-gray-300 rounded px-3 py-2"
         />
+        <label className="grid gap-1 text-sm font-medium">Replace cover with an image from your device <span className="font-normal text-gray-500">Optional; if selected, it replaces the URL above. JPEG, PNG, WebP, GIF, or AVIF; maximum 4 MB total with the report file.</span><input type="file" name="coverImageFile" accept="image/jpeg,image/png,image/webp,image/gif,image/avif" className="border border-gray-300 rounded px-3 py-2 font-normal" /></label>
         <select
           name="category"
           defaultValue={report.category}
