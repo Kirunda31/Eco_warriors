@@ -13,13 +13,16 @@ export async function deleteUser(formData: FormData) {
 
   const user = await prisma.user.findUnique({
     where: { id },
-    select: { id: true, role: true },
+    select: { id: true, role: true, _count: { select: { progressReports: true } } },
   });
   if (!user) throw new Error('User not found.');
 
   if (user.role === 'admin') {
     const adminCount = await prisma.user.count({ where: { role: 'admin' } });
     if (adminCount <= 1) throw new Error('The last administrator account cannot be deleted.');
+  }
+  if (user._count.progressReports > 0) {
+    throw new Error('Delete this user’s project progress reports before deleting their account.');
   }
   await prisma.$transaction(async (tx) => {
     await tx.program.updateMany({ where: { managerId: id }, data: { managerId: null } });

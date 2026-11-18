@@ -80,8 +80,8 @@ model ProjectProgressReport {
   id              Int      @id @default(autoincrement())
   project         Project  @relation(fields: [projectId], references: [id])
   projectId       Int
-  submittedBy     User?    @relation(fields: [submittedById], references: [id], onDelete: SetNull)
-  submittedById   Int?
+  submittedBy     User     @relation(fields: [submittedById], references: [id])
+  submittedById   Int
   reportingPeriod String
   summary         String
   achievements    String

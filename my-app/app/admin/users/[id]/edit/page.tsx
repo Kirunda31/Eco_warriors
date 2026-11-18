@@ -9,7 +9,7 @@ export default async function EditUserPage({ params, searchParams }: { params: P
   const [{ id }, query] = await Promise.all([params, searchParams]);
   const user = await prisma.user.findUnique({
     where: { id: parseInt(id) },
-    select: { id: true, name: true, email: true, role: true },
+    select: { id: true, name: true, email: true, role: true, _count: { select: { progressReports: true } } },
   });
 
   if (!user) return <h1>User not found</h1>;
@@ -47,7 +47,7 @@ export default async function EditUserPage({ params, searchParams }: { params: P
           <button type="submit" className="w-fit bg-green-800 text-white rounded px-4 py-2 hover:bg-green-900">Update password</button>
         </form>
 
-        {user.id !== admin.id && <UserDeleteForm userId={user.id} userName={user.name} />}
+        {user.id !== admin.id && <UserDeleteForm userId={user.id} userName={user.name} hasProgressReports={user._count.progressReports > 0} />}
       </div>
     </div>
   );
