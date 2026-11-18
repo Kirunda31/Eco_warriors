@@ -10,9 +10,38 @@ const adminGroups = [
   ['System', [['/admin/users', '👥 Users']]],
 ] as const;
 
-function NavLink({ href, children }: { href: string; children: React.ReactNode }) { return <Link href={href} className="block px-5 py-2 text-sm text-gray-300 hover:bg-gray-800 hover:text-white">{children}</Link>; }
+function NavLink({ href, children }: { href: string; children: React.ReactNode }) { return <Link href={href} className="flex min-h-11 items-center px-5 py-2 text-sm text-gray-300 hover:bg-gray-800 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-green-300">{children}</Link>; }
+
+function NavigationSections({ groups }: { groups: readonly (readonly [string, readonly (readonly [string, string])[]])[] }) {
+  return <>{groups.map(([title, links]) => <section key={title} className="mt-5"><h4 className="px-5 pb-2 text-[11px] font-semibold uppercase tracking-wider text-gray-500">{title}</h4>{links.map(([href, label]) => <NavLink key={href} href={href}>{label}</NavLink>)}</section>)}</>;
+}
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const user = await requireStaff(); const groups = user.role === 'manager' ? [['My program', managerLinks]] as const : adminGroups;
-  return <div className="flex min-h-screen"><aside className="w-64 shrink-0 bg-gray-900 py-5"><div className="border-b border-gray-800 px-5 pb-4 text-lg font-bold text-white">🌿 Eco Warriors</div>{groups.map(([title, links]) => <section key={title} className="mt-5"><h4 className="px-5 pb-2 text-[11px] font-semibold uppercase tracking-wider text-gray-500">{title}</h4>{links.map(([href, label]) => <NavLink key={href} href={href}>{label}</NavLink>)}</section>)}</aside><main className="flex-1 bg-gray-50"><header className="flex items-center justify-between border-b bg-white px-7 py-4"><h1 className="text-lg font-bold">{user.role === 'manager' ? 'My program' : 'Admin'}</h1><p className="text-sm text-gray-500">Logged in as <b className="text-green-800">{user.name}</b></p></header><div className="p-7">{children}</div></main></div>;
+  return (
+    <div className="flex min-h-screen flex-col md:flex-row">
+      <aside className="hidden shrink-0 bg-gray-900 py-5 md:block md:w-56 lg:w-60 xl:w-64">
+        <div className="border-b border-gray-800 px-5 pb-4 text-lg font-bold text-white">🌿 Eco Warriors</div>
+        <NavigationSections groups={groups} />
+      </aside>
+      <main className="flex min-w-0 flex-1 flex-col bg-gray-50">
+        <header className="sticky top-0 z-40 flex flex-wrap items-center justify-between gap-3 border-b bg-white px-4 py-3 sm:px-6 md:static md:px-7 md:py-4">
+          <div className="flex items-center gap-3">
+            <details className="relative md:hidden">
+              <summary className="flex min-h-11 cursor-pointer list-none items-center gap-2 rounded-lg border border-gray-200 px-3 text-sm font-semibold text-gray-800 shadow-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-700">
+                <span aria-hidden="true" className="text-lg">☰</span><span>Menu</span>
+              </summary>
+              <div className="absolute left-0 top-full z-50 mt-2 max-h-[min(75vh,32rem)] w-[min(90vw,22rem)] overflow-y-auto rounded-xl border border-gray-700 bg-gray-900 py-3 shadow-2xl">
+                <div className="border-b border-gray-800 px-5 pb-4 text-lg font-bold text-white">🌿 Eco Warriors</div>
+                <NavigationSections groups={groups} />
+              </div>
+            </details>
+            <h1 className="text-base font-bold sm:text-lg">{user.role === 'manager' ? 'My program' : 'Admin'}</h1>
+          </div>
+          <p className="ml-auto max-w-[45vw] truncate text-xs text-gray-500 sm:max-w-none sm:text-sm">Logged in as <b className="text-green-800">{user.name}</b></p>
+        </header>
+        <div className="min-w-0 p-4 sm:p-6 lg:p-7">{children}</div>
+      </main>
+    </div>
+  );
 }
