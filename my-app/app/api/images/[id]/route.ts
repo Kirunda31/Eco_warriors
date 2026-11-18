@@ -12,7 +12,8 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
 
   return new Response(Buffer.from(image.data), {
     headers: {
-      'Cache-Control': 'public, max-age=31536000, immutable',
+      'Cache-Control': 'public, max-age=3600, immutable',
+      'Vercel-CDN-Cache-Control': 'public, s-maxage=86400, stale-while-revalidate=86400',
       'Content-Type': image.contentType,
       'X-Content-Type-Options': 'nosniff',
     },

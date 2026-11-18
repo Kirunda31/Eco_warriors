@@ -18,7 +18,7 @@ export default async function AdminGalleryPage() {
       <div className="grid grid-cols-4 gap-4">
         {items.map((item) => (
           <Link key={item.id} href={`/admin/gallery/${item.id}/edit`} className="block bg-white border border-gray-200 rounded-lg overflow-hidden hover:border-green-700">
-            <img src={item.imageUrl} alt={item.caption ?? ''} className="w-full h-28 object-cover" />
+            <img src={item.imageUrl} alt={item.caption ?? ''} loading="lazy" decoding="async" className="w-full h-28 object-cover" />
             <p className="text-xs p-2 text-gray-600 truncate">{item.caption || 'Untitled'}</p>
           </Link>
         ))}
