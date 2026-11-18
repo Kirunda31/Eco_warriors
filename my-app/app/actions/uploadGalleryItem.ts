@@ -1,11 +1,9 @@
 'use server';
 
 import { prisma } from '@/lib/prisma';
-import { s3Client } from '@/lib/s3';
-import { PutObjectCommand } from '@aws-sdk/client-s3';
 import { requireProjectAccess, requireStaff } from '@/lib/auth';
 import { redirect } from 'next/navigation';
-import { randomUUID } from 'crypto';
+import { MAX_STORED_IMAGE_BYTES } from '@/lib/imageStorage';
 
 const MAX_GALLERY_UPLOADS = 5;
 
@@ -22,29 +20,27 @@ export async function uploadGalleryItem(formData: FormData) {
 
   if (files.length === 0) throw new Error('Choose at least one image to upload.');
   if (files.length > MAX_GALLERY_UPLOADS) throw new Error(`You can upload up to ${MAX_GALLERY_UPLOADS} images at a time.`);
-  if (files.some((file) => !file.type.startsWith('image/'))) throw new Error('Only image files can be uploaded.');
+  if (files.some((file) => !['image/avif', 'image/gif', 'image/jpeg', 'image/png', 'image/webp'].includes(file.type))) {
+    throw new Error('Use JPEG, PNG, WebP, GIF, or AVIF images.');
+  }
+  if (files.some((file) => file.size > MAX_STORED_IMAGE_BYTES) || files.reduce((total, file) => total + file.size, 0) > MAX_STORED_IMAGE_BYTES) {
+    throw new Error('Choose up to five images with a combined size of 4 MB or less.');
+  }
 
-  const uploadedItems = await Promise.all(
-    files.map(async (file) => {
-      const extension = file.name.split('.').pop()?.replace(/[^a-zA-Z0-9]/g, '') || 'image';
-      const fileName = `gallery/${Date.now()}-${randomUUID()}.${extension}`;
-      await s3Client.send(
-        new PutObjectCommand({
-          Bucket: process.env.AWS_BUCKET_NAME,
-          Key: fileName,
-          Body: Buffer.from(await file.arrayBuffer()),
-          ContentType: file.type,
-        })
-      );
+  await prisma.$transaction(async (tx) => {
+    const uploadedItems = await Promise.all(files.map(async (file) => {
+      const image = await tx.imageAsset.create({
+        data: { contentType: file.type, data: Buffer.from(await file.arrayBuffer()) },
+        select: { id: true },
+      });
       return {
-        imageUrl: `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${fileName}`,
+        imageUrl: `/api/images/${image.id}`,
         caption: caption || null,
         projectId: projectIdRaw ? parseInt(projectIdRaw) : null,
       };
-    })
-  );
-
-  await prisma.galleryItem.createMany({ data: uploadedItems });
+    }));
+    await tx.galleryItem.createMany({ data: uploadedItems });
+  });
 
   redirect('/admin');
 }

@@ -1,6 +1,7 @@
 import { uploadGalleryItem } from '@/app/actions/uploadGalleryItem';
 import { prisma } from '@/lib/prisma';
 import { isProgramManager, requireStaff } from '@/lib/auth';
+import GalleryImageUploadForm from '@/app/components/GalleryImageUploadForm';
 
 export default async function NewGalleryItemPage() {
   const user = await requireStaff();
@@ -11,15 +12,12 @@ export default async function NewGalleryItemPage() {
   return (
     <div className="max-w-lg mx-auto p-6">
       <h1 className="text-2xl font-bold mb-2">Upload Gallery Images</h1>
-      <p className="text-sm text-gray-600 mb-6">Choose up to five images to add them to the gallery at once.</p>
-      <form
-        action={uploadGalleryItem}
-        className="flex flex-col gap-4"
-      >
+        <p className="text-sm text-gray-600 mb-6">Choose up to five JPEG, PNG, WebP, GIF, or AVIF images. The combined upload limit is 4 MB.</p>
+      <GalleryImageUploadForm action={uploadGalleryItem}>
         <input
           type="file"
           name="images"
-          accept="image/*"
+          accept="image/jpeg,image/png,image/webp,image/gif,image/avif"
           multiple
           required
           className="border border-gray-300 rounded px-3 py-2"
@@ -40,7 +38,7 @@ export default async function NewGalleryItemPage() {
         >
           Upload Images
         </button>
-      </form>
+      </GalleryImageUploadForm>
     </div>
   );
 }

@@ -7,14 +7,15 @@ type FeaturedImageFormProps = {
   action: (formData: FormData) => void | Promise<void>;
   children: ReactNode;
   className?: string;
+  fileFieldName?: string;
 };
 
-export default function FeaturedImageForm({ action, children, className }: FeaturedImageFormProps) {
+export default function FeaturedImageForm({ action, children, className, fileFieldName = 'featuredImage' }: FeaturedImageFormProps) {
   const [error, setError] = useState('');
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     const formData = new FormData(event.currentTarget);
-    const image = formData.get('featuredImage');
+    const image = formData.get(fileFieldName);
     if (image instanceof File && image.size > MAX_FEATURED_IMAGE_BYTES) {
       event.preventDefault();
       setError('Choose an image that is 4 MB or smaller, then submit again.');

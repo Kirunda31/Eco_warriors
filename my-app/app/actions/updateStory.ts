@@ -5,6 +5,7 @@ import { requireProjectAccess, requireStaff, requireStoryAccess } from '@/lib/au
 import { redirect } from 'next/navigation';
 import { uploadStoryPhoto } from './uploadStoryPhoto';
 import { getVideoUrl } from './storyMedia';
+import { deleteImageIfUnused } from '@/lib/imageStorage';
 
 export async function updateStory(formData: FormData) {
   const user = await requireStaff();
@@ -46,6 +47,7 @@ export async function updateStory(formData: FormData) {
       projectId: projectIdRaw ? parseInt(projectIdRaw) : null,
     },
   });
+  if (existing.photoUrl !== photoUrl) await deleteImageIfUnused(existing.photoUrl);
 
   redirect('/admin');
 }

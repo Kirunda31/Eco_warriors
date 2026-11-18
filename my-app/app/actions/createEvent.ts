@@ -14,7 +14,7 @@ export async function createEvent(formData: FormData) {
   const time = formData.get('time') as string;
   const location = formData.get('location') as string;
   const registrationLink = formData.get('registrationLink') as string;
-  const featuredImage = await uploadFeaturedImage(formData.get('featuredImage'), 'events');
+  const featuredImage = await uploadFeaturedImage(formData.get('featuredImage'));
 
   await prisma.event.create({
     data: {

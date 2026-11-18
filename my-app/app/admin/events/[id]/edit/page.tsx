@@ -23,7 +23,7 @@ export default async function EditEventPage({ params }: { params: Promise<{ id: 
         <input type="time" name="time" defaultValue={event.time} required className="border border-gray-300 rounded px-3 py-2" />
         <input type="text" name="location" defaultValue={event.location} required className="border border-gray-300 rounded px-3 py-2" />
         <input type="url" name="registrationLink" defaultValue={event.registrationLink ?? ''} className="border border-gray-300 rounded px-3 py-2" />
-        <label className="text-sm font-medium text-gray-700">Featured photo {!event.featuredImage && <span className="text-red-700">*</span>}<input type="file" name="featuredImage" accept="image/*" required={!event.featuredImage} className="mt-1 block w-full border border-gray-300 rounded px-3 py-2" /><span className="mt-1 block text-xs font-normal text-gray-500">{event.featuredImage ? 'Leave blank to keep the current photo.' : 'A photo is required.'} Maximum file size: 4 MB.</span></label>
+        <label className="text-sm font-medium text-gray-700">Featured photo {!event.featuredImage && <span className="text-red-700">*</span>}<input type="file" name="featuredImage" accept="image/jpeg,image/png,image/webp,image/gif,image/avif" required={!event.featuredImage} className="mt-1 block w-full border border-gray-300 rounded px-3 py-2" /><span className="mt-1 block text-xs font-normal text-gray-500">{event.featuredImage ? 'Leave blank to keep the current photo.' : 'A photo is required.'} JPEG, PNG, WebP, GIF or AVIF; maximum file size: 4 MB.</span></label>
         <button type="submit" className="bg-green-800 text-white rounded px-4 py-2 hover:bg-green-900">Save Changes</button>
       </FeaturedImageForm>
       <form action={deleteEvent}>

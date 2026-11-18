@@ -10,7 +10,7 @@ export async function createNews(formData: FormData) {
 
   const title = formData.get('title') as string;
   const slug = formData.get('slug') as string;
-  const featuredImage = await uploadFeaturedImage(formData.get('featuredImage'), 'news');
+  const featuredImage = await uploadFeaturedImage(formData.get('featuredImage'));
   const content = formData.get('content') as string;
   const author = formData.get('author') as string;
   const category = formData.get('category') as string;

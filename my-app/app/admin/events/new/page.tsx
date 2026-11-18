@@ -12,7 +12,7 @@ export default function NewEventPage() {
         <input type="time" name="time" required className="border border-gray-300 rounded px-3 py-2" />
         <input type="text" name="location" placeholder="Location" required className="border border-gray-300 rounded px-3 py-2" />
         <input type="url" name="registrationLink" placeholder="Registration Link (optional)" className="border border-gray-300 rounded px-3 py-2" />
-        <label className="text-sm font-medium text-gray-700">Featured photo <span className="text-red-700">*</span><input type="file" name="featuredImage" accept="image/*" required className="mt-1 block w-full border border-gray-300 rounded px-3 py-2" /><span className="mt-1 block text-xs font-normal text-gray-500">Maximum file size: 4 MB.</span></label>
+        <label className="text-sm font-medium text-gray-700">Featured photo <span className="text-red-700">*</span><input type="file" name="featuredImage" accept="image/jpeg,image/png,image/webp,image/gif,image/avif" required className="mt-1 block w-full border border-gray-300 rounded px-3 py-2" /><span className="mt-1 block text-xs font-normal text-gray-500">JPEG, PNG, WebP, GIF or AVIF; maximum file size: 4 MB.</span></label>
         <button type="submit" className="bg-green-800 text-white rounded px-4 py-2 hover:bg-green-900">Add Event</button>
       </FeaturedImageForm>
     </div>

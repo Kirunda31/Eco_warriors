@@ -3,6 +3,7 @@
 import { prisma } from '@/lib/prisma';
 import { requireGalleryItemAccess, requireProjectAccess, requireStaff } from '@/lib/auth';
 import { redirect } from 'next/navigation';
+import { deleteImageIfUnused } from '@/lib/imageStorage';
 
 export async function updateGalleryItem(formData: FormData) {
   const user = await requireStaff();
@@ -12,6 +13,7 @@ export async function updateGalleryItem(formData: FormData) {
   const caption = formData.get('caption') as string;
   const projectIdRaw = formData.get('projectId') as string;
   await requireGalleryItemAccess(id);
+  const existing = await prisma.galleryItem.findUnique({ where: { id }, select: { imageUrl: true } });
   if (projectIdRaw) await requireProjectAccess(parseInt(projectIdRaw));
   else if (user.role === 'manager') redirect('/admin/gallery');
 
@@ -23,6 +25,7 @@ export async function updateGalleryItem(formData: FormData) {
       projectId: projectIdRaw ? parseInt(projectIdRaw) : null,
     },
   });
+  if (existing?.imageUrl !== imageUrl) await deleteImageIfUnused(existing?.imageUrl);
 
   redirect('/admin');
 }

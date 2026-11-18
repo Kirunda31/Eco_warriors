@@ -4,6 +4,7 @@ import { prisma } from '@/lib/prisma';
 import { requireAdmin } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import { uploadFeaturedImage } from './uploadFeaturedImage';
+import { deleteImageIfUnused } from '@/lib/imageStorage';
 
 export async function updateEvent(formData: FormData) {
   await requireAdmin();
@@ -17,12 +18,13 @@ export async function updateEvent(formData: FormData) {
   const registrationLink = formData.get('registrationLink') as string;
   const existing = await prisma.event.findUnique({ where: { id }, select: { featuredImage: true } });
   if (!existing) throw new Error('Event not found.');
-  const featuredImage = await uploadFeaturedImage(formData.get('featuredImage'), 'events', existing.featuredImage);
+  const featuredImage = await uploadFeaturedImage(formData.get('featuredImage'), existing.featuredImage);
 
   await prisma.event.update({
     where: { id },
     data: { title, description, date: new Date(date), time, location, registrationLink: registrationLink || null, featuredImage },
   });
+  if (existing.featuredImage !== featuredImage) await deleteImageIfUnused(existing.featuredImage);
 
   redirect('/admin');
 }

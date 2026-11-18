@@ -8,7 +8,7 @@ export default function NewNewsPage() {
       <FeaturedImageForm action={createNews} className="flex flex-col gap-4">
         <input type="text" name="title" placeholder="Title" required className="border border-gray-300 rounded px-3 py-2" />
         <input type="text" name="slug" placeholder="Slug" required className="border border-gray-300 rounded px-3 py-2" />
-        <label className="text-sm font-medium text-gray-700">Featured photo <span className="text-red-700">*</span><input type="file" name="featuredImage" accept="image/*" required className="mt-1 block w-full border border-gray-300 rounded px-3 py-2" /><span className="mt-1 block text-xs font-normal text-gray-500">Maximum file size: 4 MB.</span></label>
+        <label className="text-sm font-medium text-gray-700">Featured photo <span className="text-red-700">*</span><input type="file" name="featuredImage" accept="image/jpeg,image/png,image/webp,image/gif,image/avif" required className="mt-1 block w-full border border-gray-300 rounded px-3 py-2" /><span className="mt-1 block text-xs font-normal text-gray-500">JPEG, PNG, WebP, GIF or AVIF; maximum file size: 4 MB.</span></label>
         <textarea name="content" placeholder="Content" required className="border border-gray-300 rounded px-3 py-2" rows={6} />
         <input type="text" name="author" placeholder="Author" required className="border border-gray-300 rounded px-3 py-2" />
         <input type="text" name="category" placeholder="Category" required className="border border-gray-300 rounded px-3 py-2" />

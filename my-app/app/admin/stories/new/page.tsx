@@ -1,6 +1,7 @@
 import { prisma } from '@/lib/prisma';
 import { createStory } from '@/app/actions/createStory';
 import { isProgramManager, requireStaff } from '@/lib/auth';
+import FeaturedImageForm from '@/app/components/FeaturedImageForm';
 
 export default async function NewStoryPage() {
   const user = await requireStaff();
@@ -12,7 +13,7 @@ export default async function NewStoryPage() {
   return (
     <div className="max-w-lg mx-auto p-6">
       <h1 className="text-2xl font-bold mb-6">Create New Story</h1>
-      <form action={createStory} encType="multipart/form-data" className="flex flex-col gap-4">
+      <FeaturedImageForm action={createStory} fileFieldName="photo" className="flex flex-col gap-4">
         <input
           type="text"
           name="personName"
@@ -64,7 +65,7 @@ export default async function NewStoryPage() {
           required
           className="border border-gray-300 rounded px-3 py-2"
         />
-        <label className="text-sm font-medium text-gray-700">Story photo (optional)<input type="file" name="photo" accept="image/*" className="mt-1 block w-full border border-gray-300 rounded px-3 py-2" /></label>
+        <label className="text-sm font-medium text-gray-700">Story photo (optional)<input type="file" name="photo" accept="image/jpeg,image/png,image/webp,image/gif,image/avif" className="mt-1 block w-full border border-gray-300 rounded px-3 py-2" /><span className="mt-1 block text-xs font-normal text-gray-500">JPEG, PNG, WebP, GIF or AVIF; maximum 4 MB.</span></label>
         <label className="text-sm font-medium text-gray-700">Video link (optional)<input type="url" name="videoUrl" placeholder="https://youtube.com/... or a social-media post" className="mt-1 block w-full border border-gray-300 rounded px-3 py-2" /><span className="mt-1 block text-xs font-normal text-gray-500">Paste a YouTube or social-media link. It will open on that platform.</span></label>
         <select
           name="status"
@@ -92,7 +93,7 @@ export default async function NewStoryPage() {
         >
           Create Story
         </button>
-      </form>
+      </FeaturedImageForm>
     </div>
   );
 }
