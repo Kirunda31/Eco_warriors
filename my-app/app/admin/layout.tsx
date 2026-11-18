@@ -1,5 +1,6 @@
 import { requireStaff } from '@/lib/auth';
 import Link from 'next/link';
+import MobileAdminMenu from '@/app/components/MobileAdminMenu';
 
 const managerLinks = [['/admin', '📊 Dashboard'], ['/admin/implementation', '📈 Impact dashboard'], ['/admin/delivery', '📦 Delivery records'], ['/admin/beneficiaries', '🏫 Beneficiaries'], ['/admin/documents', '📚 Documents'], ['/admin/reminders', '🔔 Reminders'], ['/admin/programs', '🎯 My program'], ['/admin/projects', '📁 Projects'], ['/admin/progress-reports', '📝 Progress reports'], ['/admin/stories', '💬 Stories'], ['/admin/gallery', '🖼️ Gallery'], ['/admin/reports', '📄 Reports']] as const;
 const adminGroups = [
@@ -27,15 +28,10 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       <main className="flex min-w-0 flex-1 flex-col bg-gray-50">
         <header className="sticky top-0 z-40 flex flex-wrap items-center justify-between gap-3 border-b bg-white px-4 py-3 sm:px-6 md:static md:px-7 md:py-4">
           <div className="flex items-center gap-3">
-            <details className="relative md:hidden">
-              <summary className="flex min-h-11 cursor-pointer list-none items-center gap-2 rounded-lg border border-gray-200 px-3 text-sm font-semibold text-gray-800 shadow-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-700">
-                <span aria-hidden="true" className="text-lg">☰</span><span>Menu</span>
-              </summary>
-              <div className="absolute left-0 top-full z-50 mt-2 max-h-[min(75vh,32rem)] w-[min(90vw,22rem)] overflow-y-auto rounded-xl border border-gray-700 bg-gray-900 py-3 shadow-2xl">
+            <MobileAdminMenu>
                 <div className="border-b border-gray-800 px-5 pb-4 text-lg font-bold text-white">🌿 Eco Warriors</div>
                 <NavigationSections groups={groups} />
-              </div>
-            </details>
+            </MobileAdminMenu>
             <h1 className="text-base font-bold sm:text-lg">{user.role === 'manager' ? 'My program' : 'Admin'}</h1>
           </div>
           <p className="ml-auto max-w-[45vw] truncate text-xs text-gray-500 sm:max-w-none sm:text-sm">Logged in as <b className="text-green-800">{user.name}</b></p>
