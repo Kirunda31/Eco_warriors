@@ -18,7 +18,7 @@ export default async function Navbar() {
   }
 
   return (
-    <header className="border-b border-emerald-950/10 bg-white text-slate-800 shadow-sm">
+    <header className="sticky top-0 z-50 border-b border-emerald-950/10 bg-white/95 text-slate-800 shadow-sm backdrop-blur">
       <nav className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-5 gap-y-3 px-5 py-4">
         <Link href="/" className="mr-auto flex items-center gap-2 font-bold tracking-tight text-emerald-900">
           <span className="grid h-9 w-9 place-items-center rounded-full bg-emerald-800 text-lg text-white">🌿</span>

@@ -99,10 +99,10 @@ export default async function Home() {
               <Link
                 key={project.id}
                 href={`/projects/${project.slug}`}
-                className="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl"
+                className="group flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl"
               >
                 {project.gallery[0] ? <img src={project.gallery[0].imageUrl} alt={project.gallery[0].caption ?? `${project.title} project activity`} className="h-48 w-full object-cover transition duration-500 group-hover:scale-105" /> : <div className="flex h-48 items-end bg-gradient-to-br from-emerald-900 to-teal-700 p-6"><span className="text-sm font-bold uppercase tracking-[0.16em] text-emerald-100">Eco Warriors</span></div>}
-                <div className="p-6"><h3 className="text-lg font-semibold text-emerald-950">{project.title}</h3><p className="mt-2 text-sm leading-6 text-gray-600">{project.description}</p><span className="mt-5 inline-block text-sm font-semibold text-emerald-800">Discover the project →</span></div>
+                <div className="flex flex-1 flex-col p-6"><h3 className="line-clamp-2 text-lg font-semibold text-emerald-950">{project.title}</h3><p className="mt-2 line-clamp-3 text-sm leading-6 text-gray-600">{project.description}</p><span className="mt-auto pt-5 text-sm font-semibold text-emerald-800">Discover the project →</span></div>
               </Link>
             ))}
           </div>
