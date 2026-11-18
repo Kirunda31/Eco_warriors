@@ -18,7 +18,7 @@ export default async function NewUserPage() {
         <input name="name" placeholder="Full name" required className="border border-gray-300 rounded px-3 py-2" />
         <input name="username" placeholder="Username" autoComplete="username" required className="border border-gray-300 rounded px-3 py-2" />
         <input type="email" name="email" placeholder="Email address" required className="border border-gray-300 rounded px-3 py-2" />
-        <input type="password" name="password" placeholder="Temporary password (minimum 8 characters)" minLength={8} autoComplete="new-password" required className="border border-gray-300 rounded px-3 py-2" />
+        <label className="grid gap-1 text-sm font-medium">Initial password <span className="font-normal text-gray-500">Set a temporary password of at least 8 characters, then share it with the user securely.</span><input type="password" name="password" placeholder="At least 8 characters" minLength={8} maxLength={72} autoComplete="new-password" required className="border border-gray-300 rounded px-3 py-2 font-normal" /></label>
         <label className="text-sm text-gray-600">Role</label>
         <select name="role" defaultValue="manager" className="border border-gray-300 rounded px-3 py-2">
           <option value="manager">Program manager</option>
