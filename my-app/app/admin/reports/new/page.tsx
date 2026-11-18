@@ -1,6 +1,7 @@
 import { prisma } from '@/lib/prisma';
 import { createReport } from '@/app/actions/createReport';
 import { isProgramManager, requireStaff } from '@/lib/auth';
+import DocumentUploadForm from '@/app/components/DocumentUploadForm';
 
 export default async function NewReportPage() {
   const user = await requireStaff();
@@ -12,7 +13,7 @@ export default async function NewReportPage() {
   return (
     <div className="max-w-lg mx-auto p-6">
       <h1 className="text-2xl font-bold mb-6">Add New Report</h1>
-      <form action={createReport} className="flex flex-col gap-4">
+      <DocumentUploadForm action={createReport} className="flex flex-col gap-4">
         <input
           type="text"
           name="title"
@@ -26,11 +27,11 @@ export default async function NewReportPage() {
           required
           className="border border-gray-300 rounded px-3 py-2"
         />
+        <label className="grid gap-1 text-sm font-medium">Upload a report from your device <span className="font-normal text-gray-500">PDF, Office, CSV, text, or common image files; maximum 4 MB.</span><input type="file" name="file" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.csv,.txt,.jpg,.jpeg,.png,.webp" className="border border-gray-300 rounded px-3 py-2 font-normal" /></label>
         <input
           type="url"
           name="fileUrl"
-          placeholder="PDF URL (from S3 bucket)"
-          required
+          placeholder="Or enter an external report URL"
           className="border border-gray-300 rounded px-3 py-2"
         />
         <input
@@ -75,7 +76,7 @@ export default async function NewReportPage() {
         >
           Add Report
         </button>
-      </form>
+      </DocumentUploadForm>
     </div>
   );
 }

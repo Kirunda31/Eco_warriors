@@ -2,6 +2,7 @@ import { prisma } from '@/lib/prisma';
 import { updateReport } from '@/app/actions/updateReport';
 import { deleteReport } from '@/app/actions/deleteReport';
 import { isProgramManager, requireReportAccess, requireStaff } from '@/lib/auth';
+import DocumentUploadForm from '@/app/components/DocumentUploadForm';
 
 export default async function EditReportPage({
   params,
@@ -27,7 +28,7 @@ export default async function EditReportPage({
     <div className="max-w-lg mx-auto p-6">
       <h1 className="text-2xl font-bold mb-6">Edit Report</h1>
 
-      <form action={updateReport} className="flex flex-col gap-4 mb-6">
+      <DocumentUploadForm action={updateReport} className="flex flex-col gap-4 mb-6">
         <input type="hidden" name="id" value={report.id} />
         <input
           type="text"
@@ -42,11 +43,12 @@ export default async function EditReportPage({
           required
           className="border border-gray-300 rounded px-3 py-2"
         />
+        <label className="grid gap-1 text-sm font-medium">Replace report from your device <span className="font-normal text-gray-500">Optional; leave empty to keep the current file. Maximum 4 MB.</span><input type="file" name="file" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.csv,.txt,.jpg,.jpeg,.png,.webp" className="border border-gray-300 rounded px-3 py-2 font-normal" /></label>
         <input
           type="url"
           name="fileUrl"
           defaultValue={report.fileUrl}
-          required
+          aria-label="Report URL"
           className="border border-gray-300 rounded px-3 py-2"
         />
         <input
@@ -92,7 +94,7 @@ export default async function EditReportPage({
         >
           Save Changes
         </button>
-      </form>
+      </DocumentUploadForm>
 
       <form action={deleteReport}>
         <input type="hidden" name="id" value={report.id} />

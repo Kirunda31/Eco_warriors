@@ -29,6 +29,16 @@ model ImageAsset {
   createdAt   DateTime @default(now())
 }
 
+model SiteVisitDaily {
+  day       String
+  path      String
+  pageViews Int      @default(0)
+  updatedAt DateTime @updatedAt
+
+  @@id([day, path])
+  @@index([day])
+}
+
 model Program {
   id           Int       @id @default(autoincrement())
   name         String

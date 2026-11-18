@@ -4,6 +4,7 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import PublicChrome from "./components/PublicChrome";
 import NavigationFeedback from "./components/NavigationFeedback";
+import SiteVisitTracker from "./components/SiteVisitTracker";
 
 export const metadata: Metadata = {
   title: {
@@ -23,6 +24,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-full flex flex-col bg-white text-slate-900">
         <NavigationFeedback />
         <PublicChrome navbar={<Navbar />} footer={<Footer />}>{children}</PublicChrome>
+        <SiteVisitTracker />
       </body>
     </html>
   );

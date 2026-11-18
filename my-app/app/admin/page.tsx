@@ -5,7 +5,9 @@ export default async function AdminDashboard() {
   const user = await requireStaff();
   const programWhere = isProgramManager(user) ? { managerId: user.id } : {};
   const projectWhere = isProgramManager(user) ? { program: { managerId: user.id } } : {};
-  const [programCount, projectCount, unreadMessages, pendingVolunteers, publishedImpactCount, newsletterCount, donationInterestCount, upcomingEventCount] = await Promise.all([
+  const today = new Date().toISOString().slice(0, 10);
+  const sevenDaysAgo = new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+  const [programCount, projectCount, unreadMessages, pendingVolunteers, publishedImpactCount, newsletterCount, donationInterestCount, upcomingEventCount, viewsToday, viewsLast7Days, topPages] = await Promise.all([
     prisma.program.count({ where: programWhere }),
     prisma.project.count({ where: projectWhere }),
     isProgramManager(user) ? 0 : prisma.contactMessage.count({ where: { status: 'unread' } }),
@@ -14,6 +16,15 @@ export default async function AdminDashboard() {
     isProgramManager(user) ? 0 : prisma.contactMessage.count({ where: { category: 'Newsletter' } }),
     isProgramManager(user) ? 0 : prisma.contactMessage.count({ where: { category: 'Donation' } }),
     isProgramManager(user) ? 0 : prisma.event.count({ where: { date: { gte: new Date() } } }),
+    isProgramManager(user) ? null : prisma.siteVisitDaily.aggregate({ where: { day: today }, _sum: { pageViews: true } }),
+    isProgramManager(user) ? null : prisma.siteVisitDaily.aggregate({ where: { day: { gte: sevenDaysAgo } }, _sum: { pageViews: true } }),
+    isProgramManager(user) ? [] : prisma.siteVisitDaily.groupBy({
+      by: ['path'],
+      where: { day: { gte: sevenDaysAgo } },
+      _sum: { pageViews: true },
+      orderBy: { _sum: { pageViews: 'desc' } },
+      take: 5,
+    }),
   ]);
 
   return (
@@ -38,6 +49,21 @@ export default async function AdminDashboard() {
       </div>
 
       {!isProgramManager(user) && <>
+        <h2 className="text-base font-bold mb-3">Website visits</h2>
+        <section className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3" aria-label="Website page views">
+          <div className="rounded-lg border border-gray-200 bg-white p-4">
+            <p className="text-2xl font-bold text-green-800">{viewsToday?._sum.pageViews ?? 0}</p>
+            <p className="mt-1 text-sm text-gray-500">Page views today</p>
+          </div>
+          <div className="rounded-lg border border-gray-200 bg-white p-4">
+            <p className="text-2xl font-bold text-green-800">{viewsLast7Days?._sum.pageViews ?? 0}</p>
+            <p className="mt-1 text-sm text-gray-500">Page views, last 7 days</p>
+          </div>
+          <div className="rounded-lg border border-gray-200 bg-white p-4 sm:col-span-2 lg:col-span-1">
+            <p className="text-sm font-semibold text-gray-700">Most viewed pages · 7 days</p>
+            {topPages.length ? <ol className="mt-2 space-y-1">{topPages.map((page) => <li key={page.path} className="flex justify-between gap-3 text-sm"><span className="min-w-0 truncate text-gray-600">{page.path}</span><span className="shrink-0 font-semibold text-green-800">{page._sum.pageViews ?? 0}</span></li>)}</ol> : <p className="mt-2 text-sm text-gray-500">No visits recorded yet.</p>}
+          </div>
+        </section>
         <h2 className="text-base font-bold mb-3">Engagement at a glance</h2>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-8">
           <a href="/admin/impact" className="rounded-lg border border-gray-200 bg-white p-4 hover:border-green-700"><p className="text-2xl font-bold text-green-800">{publishedImpactCount}</p><p className="mt-1 text-sm text-gray-500">Published impact metrics</p></a>

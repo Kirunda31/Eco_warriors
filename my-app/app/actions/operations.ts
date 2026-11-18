@@ -3,9 +3,7 @@
 import { prisma } from '@/lib/prisma';
 import { requireAdmin, requireProjectAccess, requireStaff } from '@/lib/auth';
 import { redirect } from 'next/navigation';
-import { PutObjectCommand } from '@aws-sdk/client-s3';
-import { randomUUID } from 'node:crypto';
-import { s3Client } from '@/lib/s3';
+import { storeDocumentFile } from '@/lib/documentStorage';
 
 const text = (formData: FormData, name: string) => String(formData.get(name) ?? '').trim();
 const optionalDate = (value: string) => value ? new Date(`${value}T00:00:00.000Z`) : null;
@@ -49,15 +47,11 @@ export async function createDocument(formData: FormData) {
   const uploadedFile = file instanceof File && file.size > 0 ? file : null;
   const suppliedUrl = text(formData, 'fileUrl');
   if (!text(formData, 'title') || (!suppliedUrl && !uploadedFile) || !text(formData, 'category') || (projectIdRaw && !Number.isInteger(projectId))) throw new Error('Provide a title, category, and document file or URL.');
-  if (uploadedFile && uploadedFile.size > 20 * 1024 * 1024) throw new Error('Documents must be 20 MB or smaller.');
   if (projectId) await requireProjectAccess(projectId);
   else if (user.role !== 'admin') throw new Error('Programme managers must link documents to their project.');
   let fileUrl = suppliedUrl;
   if (uploadedFile) {
-    const extension = uploadedFile.name.split('.').pop()?.replace(/[^a-zA-Z0-9]/g, '') || 'file';
-    const key = `documents/${Date.now()}-${randomUUID()}.${extension}`;
-    await s3Client.send(new PutObjectCommand({ Bucket: process.env.AWS_BUCKET_NAME, Key: key, Body: Buffer.from(await uploadedFile.arrayBuffer()), ContentType: uploadedFile.type || 'application/octet-stream' }));
-    fileUrl = `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`;
+    fileUrl = await storeDocumentFile(uploadedFile, 'documents');
   }
   await prisma.document.create({ data: { title: text(formData, 'title'), fileUrl, category: text(formData, 'category'), description: text(formData, 'description') || null, visibility: text(formData, 'visibility') === 'public' ? 'public' : 'internal', projectId } });
   redirect('/admin/documents');
